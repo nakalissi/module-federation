@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: module-federation-exporter
+  labels:
+    app: module-federation
+spec:
+  containers:
+  - name: prometheus-exporter
+    image: prom/node-exporter
+    ports:
+    - containerPort: 9100

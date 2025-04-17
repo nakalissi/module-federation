@@ -16,6 +16,7 @@ export class AuthLibService {
   public login(userName: string, password: string): void {
     // Authentication for **honest** users TM. (c) Manfred Steyer
     this.userName = userName;
+    console.log(`User ${userName} logged in`);
   }
 
 }
