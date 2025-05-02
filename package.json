@@ -3,9 +3,9 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "npm run start:shell",
-    "start:shell": "ng serve shell  -o --port 5000",
-    "start:mfe1": "ng serve mfe1 -o --port 3000",
+    "start": "npm run start:all",
+    "start:shell": "ng serve shell -o --host 0.0.0.0 --port 5000",
+    "start:mfe1": "ng serve mfe1 -o --host 0.0.0.0 --port 3000",
     "start:all": "concurrently \"npm run start:shell\" \"npm run start:mfe1\" ",
     "build:shell": "ng build shell --prod",
     "build:mfe1": "ng build mfe1 --prod",
@@ -29,6 +29,7 @@
     "@angular/platform-browser": "^16.0.0",
     "@angular/platform-browser-dynamic": "^16.0.0",
     "@angular/router": "^16.0.0",
+    "@sentry/angular": "^9.5.0",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.13.0"

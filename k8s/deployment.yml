@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: module-federation
-        image: my-dockerhub-username/module-federation:latest
+        image: nakalissi/module-federation:latest
         ports:
         - containerPort: 80

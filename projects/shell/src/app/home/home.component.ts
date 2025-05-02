@@ -10,4 +10,8 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
   }
 
+  throwTestError(): void {
+    throw new Error("Sentry Test Error");
+  }
+
 }
