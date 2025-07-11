@@ -1,18 +1,50 @@
-name: Deploy Frontend
+name: Deploy Frontend - Prod
 
 on:
   push:
     branches:
       - main
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
+  build-and-test:
+    name: 🚀 Build & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⬇️ Checkout
+        uses: actions/checkout@v4
+
+      - name: 🧱 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: 📚 Install Dependencies
+        run: npm ci
+
+      - name: ✅ Run Lint & Tests
+        run: |
+          npm run lint
+          npm run test -- --watch=false --browsers=ChromeHeadless --code-coverage
+
+      - name: 🤖 Save build cache
+        uses: actions/cache@v3
+        with:
+          path: dist
+          key: ${{ runner.os }}-angular-${{ github.sha }}
+
   deploy-prod:
     name: 🚀 Deploy Produção
+    needs: build-and-test
     runs-on: ubuntu-latest
 
     env:
       AWS_REGION: us-east-1
-      ROLE_ARN: arn:aws:iam::377147527660:role/GitHubOIDCRoleFrontend
+      ROLE_ARN: arn:aws:iam::377147527660:role/SecretsManagerFrontendAccess
       SECRET_ID: angular/app/dev
 
     steps:
@@ -25,7 +57,7 @@ jobs:
           role-to-assume: ${{ env.ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: 📥 Obter secrets do Secrets Manager
+      - name: 📅 Obter secrets do Secrets Manager
         id: secrets
         run: |
           secret=$(aws secretsmanager get-secret-value --secret-id $SECRET_ID --query SecretString --output text)
@@ -34,13 +66,11 @@ jobs:
           echo "S3_BUCKET_NAME=$(jq -r '.S3_BUCKET_NAME' secret.json)" >> $GITHUB_ENV
           echo "CLOUDFRONT_DISTRIBUTION_ID=$(jq -r '.CLOUDFRONT_DISTRIBUTION_ID' secret.json)" >> $GITHUB_ENV
 
-      - name: 🧱 Build Angular App
-        uses: actions/setup-node@v4
+      - name: 🤖 Restore build cache
+        uses: actions/cache@v3
         with:
-          node-version: 18
-
-      - run: npm ci
-      - run: npm run build -- --configuration=production
+          path: dist
+          key: ${{ runner.os }}-angular-${{ github.sha }}
 
       - name: ☁️ Deploy arquivos para S3
         run: |
@@ -59,3 +89,16 @@ jobs:
           aws cloudfront create-invalidation \
             --distribution-id $CLOUDFRONT_DISTRIBUTION_ID \
             --paths "/*"
+
+      - name: 📊 Notificação de Deploy
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "text": "🌟 Deploy em produção finalizado com sucesso para commit ${{ github.sha }}.",
+              "channel": "#deploys",
+              "username": "GitHub Actions",
+              "icon_emoji": ":rocket:"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
