@@ -8,9 +8,24 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
+    env:
+      AWS_REGION: "us-east-1"
+      SECRET_ARN: arn:aws:secretsmanager:us-east-1:377147527660:secret:/prod/angular-module-federation
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+
+      - name: Get secrets from AWS Secrets Manager
+        id: secrets
+        run: |
+          secret_name="/prod/angular-module-federation"
+          secrets=$(aws secretsmanager get-secret-value --secret-id $secret_name --query SecretString --output text)
+          
+          echo "$secrets" > secrets.json
+          echo "ECR_REPOSITORY=$(jq -r '.ECR_REPOSITORY' secrets.json)" >> $GITHUB_ENV
+          echo "S3_BUCKET_NAME=$(jq -r '.S3_BUCKET_NAME' secrets.json)" >> $GITHUB_ENV
+          echo "CLOUDFRONT_DISTRIBUTION_ID=$(jq -r '.CLOUDFRONT_DISTRIBUTION_ID' secrets.json)" >> $GITHUB_ENV
 
       # - name: Configure AWS credentials
       #   uses: aws-actions/configure-aws-credentials@v3
