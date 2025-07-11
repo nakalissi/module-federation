@@ -27,13 +27,13 @@ jobs:
         run: npm install
 
       - name: 🔧 Build mfe1
-        run: npm run build -- --project=mfe1 --configuration=production
+        run: npm run build:mfe1
 
       - name: 🔧 Build checkout
-        run: npm run build -- --project=checkout --configuration=production
+        run: npm run build:checkout
 
       - name: 🔧 Build shell
-        run: npm run build -- --project=shell --configuration=production
+        run: npm run build:shell
 
   deploy-prod:
     name: 🚀 Deploy Produção
