@@ -10,39 +10,40 @@ permissions:
   contents: read
 
 jobs:
-  build-and-test:
-    name: 🚀 Build & Test
+  build-all:
+    name: 🚀 Build MFE + Shell
     runs-on: ubuntu-latest
 
     steps:
+      - name: ⬇️ Checkout
+        uses: actions/checkout@v4
+
       - name: 🧱 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
 
-      - name: 📚 Install Dependencies
+      - name: 📂 Install Dependencies
         run: npm install
 
-      # - name: ✅ Run TSLint & Tests
-      #   run: |
-      #     ./node_modules/.bin/tslint -p tsconfig.json
-      #     npm run test -- --watch=false --browsers=ChromeHeadless --code-coverage
+      - name: 🔧 Build mfe1
+        run: npm run build -- --project=mfe1 --configuration=production
 
-      - name: 🤖 Save build cache
-        uses: actions/cache@v3
-        with:
-          path: dist
-          key: ${{ runner.os }}-angular-${{ github.sha }}
+      - name: 🔧 Build checkout
+        run: npm run build -- --project=checkout --configuration=production
+
+      - name: 🔧 Build shell
+        run: npm run build -- --project=shell --configuration=production
 
   deploy-prod:
     name: 🚀 Deploy Produção
-    needs: build-and-test
+    needs: build-all
     runs-on: ubuntu-latest
 
     env:
       AWS_REGION: us-east-1
-      ROLE_ARN: arn:aws:iam::377147527660:role/SecretsManagerFrontendAccess
-      SECRET_ID: angular/app/dev
+      ROLE_ARN: arn:aws:iam::123456789012:role/github-oidc-frontend-role
+      SECRET_ID: /frontend/prod/env
 
     steps:
       - name: ⬇️ Checkout
@@ -63,17 +64,14 @@ jobs:
           echo "S3_BUCKET_NAME=$(jq -r '.S3_BUCKET_NAME' secret.json)" >> $GITHUB_ENV
           echo "CLOUDFRONT_DISTRIBUTION_ID=$(jq -r '.CLOUDFRONT_DISTRIBUTION_ID' secret.json)" >> $GITHUB_ENV
 
-      - name: 🤖 Restore build cache
-        uses: actions/cache@v3
-        with:
-          path: dist
-          key: ${{ runner.os }}-angular-${{ github.sha }}
+      - name: ☁️ Deploy mfe1 para S3
+        run: aws s3 sync dist/mfe1/ "$S3_BUCKET_NAME/mfe1" --delete --cache-control max-age=31536000,public
 
-      - name: ☁️ Deploy arquivos para S3
-        run: |
-          aws s3 sync ./dist/ $S3_BUCKET_NAME \
-            --delete \
-            --cache-control max-age=31536000,public
+      - name: ☁️ Deploy checkout para S3
+        run: aws s3 sync dist/checkout/ "$S3_BUCKET_NAME/checkout" --delete --cache-control max-age=31536000,public
+
+      - name: ☁️ Deploy shell para S3
+        run: aws s3 sync dist/shell/ "$S3_BUCKET_NAME" --delete --cache-control max-age=31536000,public
 
       - name: 🐳 Push Docker Image para ECR
         run: |
