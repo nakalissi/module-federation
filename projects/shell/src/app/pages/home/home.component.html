@@ -1,0 +1,26 @@
+<div *ngIf="isLoading$ | async" class="loading-indicator">
+  Carregando módulos...
+</div>
+
+<div>
+  <h1>Welcome!</h1>
+
+  <mat-card *ngFor="let user of users" class="margin-bottom-16">
+    <mat-card-header>
+      <div mat-card-avatar class="example-header-image"></div>
+      <mat-card-title>{{ user.name }}</mat-card-title>
+      <mat-card-subtitle>{{ user.email }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <p>Endereço: {{ user.address.street }}, {{ user.address.suite }}, {{ user.address.city }} - {{
+        user.address.zipcode}}
+      </p>
+      <p>Telefone: {{ user.phone }}</p>
+      <p>Website: {{ user.website }}</p>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button>LIKE</button>
+      <button mat-button>SHARE</button>
+    </mat-card-actions>
+  </mat-card>
+</div>

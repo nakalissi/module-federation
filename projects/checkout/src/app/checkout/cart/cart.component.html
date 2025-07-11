@@ -1,0 +1,31 @@
+<h2>Carrinho</h2>
+<table mat-table [dataSource]="cartItems" class="mat-elevation-z2">
+    <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Produto</th>
+        <td mat-cell *matCellDef="let item">{{ item.name }}</td>
+    </ng-container>
+    <ng-container matColumnDef="price">
+        <th mat-header-cell *matHeaderCellDef>Preço</th>
+        <td mat-cell *matCellDef="let item">R$ {{ item.price }}</td>
+    </ng-container>
+    <ng-container matColumnDef="quantity">
+        <th mat-header-cell *matHeaderCellDef>Qtd</th>
+        <td mat-cell *matCellDef="let item">{{ item.quantity }}</td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="['name','price','quantity']"></tr>
+    <tr mat-row *matRowDef="let row; columns: ['name','price','quantity'];"></tr>
+</table>
+
+<p>Total: <strong>R$ {{ total }}</strong></p>
+
+<form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Endereço de entrega</mat-label>
+        <input matInput formControlName="address" required>
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Forma de pagamento</mat-label>
+        <input matInput formControlName="payment" required>
+    </mat-form-field>
+    <button mat-raised-button color="primary" type="submit" [disabled]="checkoutForm.invalid">Finalizar Compra</button>
+</form>

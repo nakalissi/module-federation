@@ -1,5 +1,3 @@
-import { AuthLibService } from 'auth-lib';
-import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 
 @Component({
@@ -8,10 +6,5 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'shell';
-
-  constructor(private service: AuthLibService, http: HttpClient) {
-    this.service.login('Max', null);
-  }
-
 }
 

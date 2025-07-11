@@ -8,13 +8,14 @@ import { AuthLibService } from './auth-lib.service';
 })
 export class AuthLibComponent implements OnInit {
 
-  user = this.service.user;
+  user = null;
 
   constructor(private service: AuthLibService) {
-
   }
 
   ngOnInit(): void {
+    this.service.login("Daniel", "123456");
+    this.user = this.service.user;
   }
 
 }

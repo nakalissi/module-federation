@@ -1,6 +1,5 @@
-import {Component} from '@angular/core';
+import { Component } from '@angular/core';
 import { AuthLibService } from 'auth-lib';
-
 
 @Component({
   selector: 'app-flights-search',

@@ -23,6 +23,9 @@
         "projects/auth-lib/src/public-api.ts"
       ]
     },
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false,
+    "types": [
+      "node",
+    ],
   }
 }

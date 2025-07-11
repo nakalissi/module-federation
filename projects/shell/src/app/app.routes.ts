@@ -4,10 +4,9 @@ import {
   WebComponentWrapperOptions,
 } from '@angular-architects/module-federation-tools';
 import { Routes } from '@angular/router';
-import { HomeComponent } from './home/home.component';
-import { NotFoundComponent } from './not-found/not-found.component';
-
-const URL = 'http://localhost:3000/remoteEntry.js';
+import { HomeComponent } from './pages/home/home.component';
+import { NotFoundComponent } from './pages/not-found/not-found.component';
+import { AuthLibComponent } from 'auth-lib';
 
 export const APP_ROUTES: Routes = [
   {
@@ -15,9 +14,10 @@ export const APP_ROUTES: Routes = [
     component: HomeComponent,
     pathMatch: 'full',
   },
-
-  // Your route here:
-
+  {
+    path: 'user',
+    component: AuthLibComponent,
+  },
   {
     path: 'flights',
     loadChildren: () =>
@@ -26,6 +26,15 @@ export const APP_ROUTES: Routes = [
         remoteName: 'mfe1',
         exposedModule: './Module',
       }).then((m) => m.FlightsModule),
+  },
+  {
+    path: 'checkout',
+    loadChildren: () =>
+      loadRemoteModule({
+        type: 'manifest',
+        remoteName: 'checkout',
+        exposedModule: './Module',
+      }).then((m) => m.CheckoutModule),
   },
   {
     path: 'react',
@@ -39,7 +48,6 @@ export const APP_ROUTES: Routes = [
       elementName: 'react-element',
     } as WebComponentWrapperOptions,
   },
-
   {
     path: '**',
     component: NotFoundComponent,

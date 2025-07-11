@@ -3,8 +3,6 @@ import { SharedLibComponent } from './shared-lib.component';
 import { OtherComponent } from './other/other.component';
 import { AuthLibModule } from 'auth-lib';
 
-
-
 @NgModule({
   declarations: [SharedLibComponent, OtherComponent],
   imports: [
