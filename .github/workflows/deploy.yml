@@ -42,8 +42,8 @@ jobs:
 
     env:
       AWS_REGION: us-east-1
-      ROLE_ARN: arn:aws:iam::123456789012:role/github-oidc-frontend-role
-      SECRET_ID: /frontend/prod/env
+      ROLE_ARN: arn:aws:iam::377147527660:role/GitHubOIDCRoleFrontend
+      SECRET_ID: angular/app/dev
 
     steps:
       - name: ⬇️ Checkout
