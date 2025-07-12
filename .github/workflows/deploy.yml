@@ -65,13 +65,7 @@ jobs:
         run: aws s3 sync dist/checkout/ "$S3_BUCKET_NAME/checkout" --delete --cache-control max-age=31536000,public
 
       - name: ☁️ Deploy shell para S3
-        run: aws s3 sync dist/shell/ "$S3_BUCKET_NAME/shell" --delete --cache-control max-age=31536000,public
-
-      - name: 🐳 Push Docker Image para ECR
-        run: |
-          docker build -t $ECR_REPOSITORY:latest .
-          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY
-          docker push $ECR_REPOSITORY:latest
+        run: aws s3 sync dist/shell/ "$S3_BUCKET_NAME" --delete --cache-control max-age=31536000,public
 
   deploy-prod:
     name: 🚀 Deploy Produção
@@ -84,6 +78,12 @@ jobs:
           aws cloudfront create-invalidation \
             --distribution-id $CLOUDFRONT_DISTRIBUTION_ID \
             --paths "/*"
+
+      - name: 🐳 Push Docker Image para ECR
+        run: |
+          docker build -t $ECR_REPOSITORY:latest .
+          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY
+          docker push $ECR_REPOSITORY:latest
 
       - name: 📊 Notificação de Deploy
         uses: slackapi/slack-github-action@v1.24.0
