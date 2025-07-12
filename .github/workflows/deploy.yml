@@ -36,7 +36,7 @@ jobs:
         run: npm run build:shell
 
       - name: 📂 List build outputs
-        run: ls -la dist && find dist
+        run: ls -la && find dist
 
   deploy-prod:
     name: 🚀 Deploy Produção
