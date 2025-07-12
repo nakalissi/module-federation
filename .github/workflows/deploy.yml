@@ -65,7 +65,7 @@ jobs:
         run: aws s3 sync dist/checkout/ "$S3_BUCKET_NAME/checkout" --delete --cache-control max-age=31536000,public
 
       - name: ☁️ Deploy shell para S3
-        run: aws s3 sync dist/shell/ "$S3_BUCKET_NAME" --delete --cache-control max-age=31536000,public
+        run: aws s3 sync dist/shell/ "$S3_BUCKET_NAME/shell" --delete --cache-control max-age=31536000,public
 
       - name: 🐳 Push Docker Image para ECR
         run: |
