@@ -39,7 +39,7 @@ jobs:
         run: ls -la && find dist
 
       - name: 📦 Save build artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: angular-dist
           path: dist/
@@ -74,7 +74,7 @@ jobs:
           echo "CLOUDFRONT_DISTRIBUTION_ID=$(jq -r '.CLOUDFRONT_DISTRIBUTION_ID' secret.json)" >> $GITHUB_ENV
 
       - name: 📥 Download build artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: angular-dist
           path: dist/
