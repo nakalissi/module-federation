@@ -65,7 +65,7 @@ jobs:
           echo "CLOUDFRONT_DISTRIBUTION_ID=$(jq -r '.CLOUDFRONT_DISTRIBUTION_ID' secret.json)" >> $GITHUB_ENV
 
       - name: 🕵️‍♂️ List dist contents
-        run: ls -R dist
+        run: ls
   
       - name: ☁️ Deploy mfe1 para S3
         run: aws s3 sync dist/mfe1/ "$S3_BUCKET_NAME/mfe1" --delete --cache-control max-age=31536000,public
